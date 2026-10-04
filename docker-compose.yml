@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_DB: resqchain
+      POSTGRES_USER: resqchain
+      POSTGRES_PASSWORD: resqchain
+    ports: ['5432:5432']
+    volumes: [resqchain_pg:/var/lib/postgresql/data]
+  redis:
+    image: redis:7-alpine
+    ports: ['6379:6379']
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ':9001'
+    environment:
+      MINIO_ROOT_USER: resqchain
+      MINIO_ROOT_PASSWORD: change-me
+    ports: ['9000:9000', '9001:9001']
+    volumes: [resqchain_minio:/data]
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment:
+      DATABASE_URL: postgresql+psycopg://resqchain:resqchain@postgres:5432/resqchain
+      REDIS_URL: redis://redis:6379/0
+    depends_on: [postgres, redis]
+    ports: ['8000:8000']
+  web:
+    build: .
+    depends_on: [api]
+    ports: ['3000:3000']
+volumes:
+  resqchain_pg:
+  resqchain_minio:

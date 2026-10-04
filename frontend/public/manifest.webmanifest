@@ -1,0 +1,9 @@
+{
+  "name": "ResQChain Relief Operations",
+  "short_name": "ResQChain",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f1eb",
+  "theme_color": "#101923",
+  "icons": []
+}
